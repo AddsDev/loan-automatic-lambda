@@ -1,0 +1,53 @@
+# Node/coverage
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+logs/
+coverage/
+.nyc_output/
+.jest/
+
+# Builds/artefactos
+dist/
+build/
+*.zip
+cdk.out/
+lib/
+out/
+.aws-sam/
+.serverless/
+
+# Terraform
+.terraform/
+terraform.tfstate*
+crash.log
+
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+.esbuild/
+.turbo/
+.parcel-cache/
+.vite/
+.pnpm-store/
+
+.serverless/
+# OS/IDE & env
+.DS_Store
+.env
+.env.*
+.envrc
+*.pem
+*.key
+*.p12
+*.crt
+*.pem
+.aws/
+*.iml
+.idea/
+.vscode/
+.history/
+*.code-workspace
