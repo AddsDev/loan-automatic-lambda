@@ -1,4 +1,7 @@
 const CalculateCapacityUseCase = require("../src/application/CalculateCapacityUseCase");
+const { Decision } = require("../src/domain/enums/decision");
+const { EventName } = require("../src/domain/enums/eventName");
+const { EventVersion } = require("../src/domain/enums/eventVersion");
 
 describe("CalculateCapacityUseCase", () => {
   it("aprueba cuando cuota <= capacidad disponible", async () => {
@@ -8,8 +11,8 @@ describe("CalculateCapacityUseCase", () => {
     const useCase = new CalculateCapacityUseCase({ notificationPort });
 
     const input = {
-      eventName: "LoanCapacityRequested",
-      eventVersion: 1,
+      eventName: EventName.LoanCapacityRequested,
+      eventVersion: EventVersion.LoanCapacityRequestedVersion,
       loanId: "7332fc1e-456e-4916-928d-9c916313bee1",
       lockVersion: 3,
       applicant: { email: "freddy44@yopmail.com", baseSalary: 4_000_000 },
@@ -19,7 +22,7 @@ describe("CalculateCapacityUseCase", () => {
     };
 
     const res = await useCase.execute(input);
-    expect(["APPROVED"]).toContain(res.decision);
+    expect([Decision.APPROVED]).toContain(res.decision);
     expect(notificationPort.publish).toHaveBeenCalled();
   });
 
@@ -31,8 +34,8 @@ describe("CalculateCapacityUseCase", () => {
     const useCase = new CalculateCapacityUseCase({ notificationPort });
 
     const input = {
-      eventName: "LoanCapacityRequested",
-      eventVersion: 1,
+      eventName: EventName.LoanCapacityRequested,
+      eventVersion: EventVersion.LoanCapacityRequestedVersion,
       loanId: "b9a9c2e9-5e2f-4a3c-9d88-dc0d1d9a1111",
       lockVersion: 7,
       applicant: {
@@ -45,7 +48,7 @@ describe("CalculateCapacityUseCase", () => {
     };
 
     const res = await useCase.execute(input);
-    expect(res.decision).toBe("REJECTED");
+    expect(res.decision).toBe(Decision.REJECTED);
     expect(notificationPort.publish).toHaveBeenCalled();
   });
 
@@ -60,8 +63,8 @@ describe("CalculateCapacityUseCase", () => {
     const useCase = new CalculateCapacityUseCase({ notificationPort });
 
     const input = {
-      eventName: "LoanCapacityRequested",
-      eventVersion: 1,
+      eventName: EventName.LoanCapacityRequested,
+      eventVersion: EventVersion.LoanCapacityRequestedVersion,
       loanId: "0f6d2a1b-6b78-4f67-9f1f-1a6f9f9e2222",
       lockVersion: 2,
       applicant: { email: "freddy44@yopmail.com", baseSalary: 6_000_000 },
@@ -71,7 +74,7 @@ describe("CalculateCapacityUseCase", () => {
     };
 
     const res = await useCase.execute(input);
-    expect(res.decision).toBe("REVIEW_MANUAL");
+    expect(res.decision).toBe(Decision.REVIEW_MANUAL);
     expect(notificationPort.publish).toHaveBeenCalled();
   });
 
@@ -86,8 +89,8 @@ describe("CalculateCapacityUseCase", () => {
     // Capacidad = 1.5M
     // Nueva cuota = 575k -> APRUEBA y NO supera 5x salario
     const input = {
-      eventName: "LoanCapacityRequested",
-      eventVersion: 1,
+      eventName: EventName.LoanCapacityRequested,
+      eventVersion: EventVersion.LoanCapacityRequestedVersion,
       loanId: "b9a9c2e9-5e2f-4a3c-9d88-dc0d1d9a1111",
       lockVersion: 5,
       applicant: { email: "user@example.com", baseSalary: 6_000_000 },
@@ -100,7 +103,7 @@ describe("CalculateCapacityUseCase", () => {
     };
 
     const res = await useCase.execute(input);
-    expect(res.decision).toBe("APPROVED");
+    expect(res.decision).toBe(Decision.APPROVED);
     expect(notificationPort.publish).toHaveBeenCalled();
   });
 
@@ -114,8 +117,8 @@ describe("CalculateCapacityUseCase", () => {
     // Un prestamo activo 1.55M/mes
     // Capacidad disponible < 0 = RECHAZO.
     const input = {
-      eventName: "LoanCapacityRequested",
-      eventVersion: 1,
+      eventName: EventName.LoanCapacityRequested,
+      eventVersion: EventVersion.LoanCapacityRequestedVersion,
       loanId: "b9a9c2e9-5e2f-4a3c-9d88-dc0d1d9a1111",
       lockVersion: 8,
       applicant: {
@@ -130,7 +133,7 @@ describe("CalculateCapacityUseCase", () => {
     };
 
     const res = await useCase.execute(input);
-    expect(res.decision).toBe("REJECTED");
+    expect(res.decision).toBe(Decision.REJECTED);
     expect(notificationPort.publish).toHaveBeenCalled();
   });
 });

@@ -1,3 +1,6 @@
+const { Decision } = require("../domain/enums/decision");
+const { EventName } = require("../domain/enums/eventName");
+const { EventVersion } = require("../domain/enums/eventVersion");
 const logger = require("../infrastructure/logging/logger");
 
 const {
@@ -47,11 +50,11 @@ class CalculateCapacityUC {
     );
 
     // Decision
-    let decision = feeNew <= capacityAvailable ? "APPROVED" : "REJECTED";
+    let decision = feeNew <= capacityAvailable ? Decision.APPROVED : Decision.REJECTED;
     let reason = null;
     const threshold = policies.salaryManualReview * applicant.baseSalary;
-    if (decision === "APPROVED" && newLoan.amount >= threshold) {
-      decision = "REVIEW_MANUAL";
+    if (decision === Decision.APPROVED && newLoan.amount >= threshold) {
+      decision = Decision.REVIEW_MANUAL;
       reason = "Monto supera umbral de revisión manual";
     }
 
@@ -66,10 +69,10 @@ class CalculateCapacityUC {
 
     // Publish result_automatic_queue -> Ms Loan Serivices
     await this.notificationPort.publish({
-      eventName: "LoanCapacityCalculated",
+      eventName: EventName.LoanCapacityCalculated,
       payload: {
-        eventName: "LoanCapacityCalculatedEvent.register",
-        eventVersion: 1,
+        eventName: EventName.LoanCapacityCalculatedEvent,
+        eventVersion: EventVersion.LoanCapacityCalculatedEventVersion,
         loanId,
         lockVersion,
         capacidadMaxima: maximunCapacity,
@@ -84,10 +87,10 @@ class CalculateCapacityUC {
 
     // Publish laon_request_queue -> Correo
     await this.notificationPort.publish({
-      eventName: "LoanDecision",
+      eventName: EventName.LoanDecision,
       payload: {
-        eventName: "DecisionEvent.register",
-        eventVersion: 1,
+        eventName: EventName.LoanDecisionEvent,
+        eventVersion: EventVersion.LoanDecisionEventVersion,
         loanId,
         email: applicant.email,
         decision,

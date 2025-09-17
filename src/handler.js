@@ -1,4 +1,5 @@
 const { validateRequest } = require("./domain/schemas")
+const { ErrorFlag } = require("./domain/errors/errorFlag")
 const CalculateCapacityUseCase = require("./application/CalculateCapacityUseCase")
 const SNSAdapter = require("./infrastructure/sns/SNSAdapter")
 const logger = require("./infrastructure/logging/logger")
@@ -20,7 +21,7 @@ exports.handler = async (event) => {
       const payload = JSON.parse(rec.body)
       if (!validateRequest(payload)) {
         logger.warn("invalid payload", { id, errors: validateRequest.errors })
-        throw new Error("INVALID_PAYLOAD");
+        throw new Error(ErrorFlag.INVALID_PAYLOAD);
       }
       await useCase.execute(payload)
     } catch (e) {
