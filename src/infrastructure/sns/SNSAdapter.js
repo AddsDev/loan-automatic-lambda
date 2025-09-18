@@ -2,7 +2,7 @@ const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns")
 const logger = require("../logging/logger")
 const NotificationPort = require("../../ports/NotificationPort")
 
-class SNSAdapter extends NotificationPort{
+class SNSAdapter extends NotificationPort {
   constructor({ region, topicArn }) {
     this.client = new SNSClient({ region });
     this.topicArn = topicArn;
